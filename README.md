@@ -6,3 +6,5 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/39a4647499f05000828b/maintainability)](https://codeclimate.com/github/Zasovitsky/frontend-project-46/maintainability)
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/39a4647499f05000828b/test_coverage)](https://codeclimate.com/github/Zasovitsky/frontend-project-46/test_coverage)
+
+[![asciicast](https://asciinema.org/a/6e24FYNs1tMjdadYVtOxQsRxn.svg)](https://asciinema.org/a/6e24FYNs1tMjdadYVtOxQsRxn)
