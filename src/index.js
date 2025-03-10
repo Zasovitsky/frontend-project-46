@@ -1,41 +1,28 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import _ from 'lodash';
 import parser from './parser.js';
+import buildAST from './buildAST.js';
+import formatter from './formatters/index.js';
 
 
-// const resolvePath = (filePath) => path.resolve(process.cwd(), filePath);
+const resolvePath = (filepath) => (filepath.includes('__fixtures__')
+  ? path.resolve(process.cwd(), filepath)
+  : path.resolve(process.cwd(), (`__fixtures__/${filepath}`))
+);
 
-const getExtension = (filename) => path.extname(filename).slice(1);
+const getExtension = (filepath) => path.extname(filepath).slice(1);
 
-const getData = (filePath) => parser(readFileSync(filePath, 'utf-8'), getExtension(filePath));
+const getData = (filepath) => parser(readFileSync(filepath, 'utf-8'), getExtension(filepath));
 
-const gendiff = (filePath1, filePath2) => {
-    const path1 = path.resolve(process.cwd(), filePath1);
-    const path2 = path.resolve(process.cwd(), filePath2);
-    
-    const data1 = getData(path1);
-    const data2 = getData(path2);
+const gendiff = (filepath1, filepath2, format = 'stylish') => {
+  const path1 = resolvePath(filepath1);
+  const path2 = resolvePath(filepath2);
 
-    const keys = _.sortBy(_.union(Object.keys(data1), Object.keys(data2)))
+  const data1 = getData(resolvePath(path1));
+  const data2 = getData(resolvePath(path2));
 
-    const result = ['{'];
-    for (let key of keys) {
-        if (!Object.hasOwn(data2, key)) {
-            result.push(`  - ${key}: ${data1[key]}`)
-        } else if (!Object.hasOwn(data1, key)) {
-            result.push(`  + ${key}: ${data2[key]}`)
-        } else {
-            if (data1[key] === data2[key]) {
-                result.push(`    ${key}: ${data2[key]}`)
-            } else {
-                result.push(`  - ${key}: ${data1[key]}`)
-                result.push(`  + ${key}: ${data2[key]}`)
-            }
-        }
-    }
-    result.push('}')
-    return result.join('\n')
+  const AST = buildAST(data1, data2);
+  return formatter(AST, format);
 };
 
 export default gendiff;
